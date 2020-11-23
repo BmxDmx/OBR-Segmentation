@@ -6,11 +6,10 @@ import matplotlib.pyplot as plt
 def createMask(name,x1,x2,y1,y2):
     img = cv2.imread('./Training/img/'+str(name)+'.png', cv2.IMREAD_COLOR) 
 
-    
+    resised_img = cv2.resize(img,(853,480))
     #rectROI = cv2.rectangle(316,397,445,557)
     imgROI = img[int(y1):int(y2),int(x1):int(x2)]                    # [y1:y2,x1:x2]
     cv2.imshow('imgROI',imgROI)
-    resised_img = cv2.resize(imgROI,(853,480))
 
     #Img color conversion
     gray = cv2.cvtColor(resised_img,cv2.COLOR_BGR2GRAY)
@@ -97,10 +96,10 @@ def createMask(name,x1,x2,y1,y2):
     # cv2.imshow('thresh_inv',thresh_inv)
     # cv2.imshow('thresh_gray',thresh_gray)
 
-    cv2.imshow('mask_blue',mask_blue)
+    # cv2.imshow('mask_blue',mask_blue)
     #cv2.imshow('res_blue',res_blue)
 
-    cv2.imshow('mask_white',mask_white)
+    # cv2.imshow('mask_white',mask_white)
     # cv2.imshow('res_white',res_white)
 
     # cv2.imshow('mask_orage',mask_orage)
