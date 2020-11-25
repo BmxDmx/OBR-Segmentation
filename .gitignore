@@ -1,0 +1,8 @@
+__pycache__
+ann
+img
+segment_ann
+*.png
+*.json
+*.jpeg
+*.jpg

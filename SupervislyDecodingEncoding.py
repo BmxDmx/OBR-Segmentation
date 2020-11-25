@@ -14,7 +14,6 @@ def base64_2_mask(s):
         tempVal = str(mask)
         f.write(tempVal)
     return mask
-
     
 def mask_2_base64(mask):
     img_pil = Image.fromarray(np.array(mask, dtype=np.uint8))
