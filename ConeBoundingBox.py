@@ -24,43 +24,34 @@ def regionOfImageY2(coordinateList):
 
 
 # Accepts the path to json file with annotations (Supervisely style)
-# Returns a list of coordinates for each bounding box => list of lists
+# Returns a list of bbox objects, each containing a color and list [pointA, pointB] => list of [[x1, y1], [x2, y2]]
 def extractBoundingBoxes(json_path):
     fullList = []
     with open(json_path) as f:
         string = f.read()
         obj = json.loads(string)
         objects = obj["objects"]
-        #print(len(objects))
         for numberOfCone in range(len(objects)):
-            for  indexOfPoints in range(len(objects[numberOfCone]['points']['exterior'])):
-                setOfCoorindates = (objects[numberOfCone]['points']['exterior'][indexOfPoints])
-                #print('Coordinates = '+str(setOfCoorindates))
-                fullList.append(setOfCoorindates)
-        #print(fullList)
+            bbox = dict()
+            bbox["coords"] = objects[numberOfCone]['points']['exterior']
+            bbox["color"] = objects[numberOfCone]["classTitle"]
+            fullList.append(bbox)
     return fullList
+
+{
+    "color": "yellow",
+    "coords": [[x1, y1], [x2, y2]]
+}
 
 
 # Accepts the path to the image and the list of bounding box coordinates for that image
 # Returns the list of masks (as images)
 def extractMasks(image_path, bounding_boxes):
-    setOfLists = []
-    count = 0 
-    #List of 2 Lists with 4 Coordinate (topLeft,TopRight)
-    for item in bounding_boxes:
-        #print(item)
-        setOfLists.append(item)
-        if len(setOfLists) == 2:
-            #print(setOfLists)
-            tempX1 = regionOfImageX1(setOfLists)
-            tempX2 = regionOfImageX2(setOfLists)
-            tempY1 = regionOfImageY1(setOfLists)
-            tempY2 = regionOfImageY2(setOfLists)
-            setOfLists.clear()
+    image = cv2.imread(image_path)   
     
     # TODO: make createMask return the resulting mask
     # pass image path instead ot indexNumber
-    mask = createMask(indexNumber,tempX1,tempX2,tempY1,tempY2)
+    
     return mask
 
 
@@ -93,9 +84,20 @@ if __name__ == "__main__":
 
         # ... not done yet:
 
-        # Create the masks for each bounding box in the corresponding image
-        # masks = extractMasks(image_path, bounding_boxes)
+        image = cv2.imread(image_path)
+
+        # Extract a mask for each bounding box in the corresponding image
+        masks = []
+        for bbox in bounding_boxes:
+            x1 = bbox["coords"][0][0]
+            y1 = bbox["coords"][0][1]
+            x2 = bbox["coords"][1][0]
+            y2 = bbox["coords"][1][1]
+            mask = createMask(image, bbox["color"], x1, x2, y1, y2)
+            masks.append(mask)
 
         # Convert the masks map into a string
+        for mask in masks:
+            # extract each string
 
         # Add the mask string to the annotation file (make a copy! don't modify the original)
