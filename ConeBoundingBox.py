@@ -96,6 +96,6 @@ if __name__ == "__main__":
         # Create the masks for each bounding box in the corresponding image
         # masks = extractMasks(image_path, bounding_boxes)
 
-        # Convert the maks map into a string
+        # Convert the masks map into a string
 
         # Add the mask string to the annotation file (make a copy! don't modify the original)
