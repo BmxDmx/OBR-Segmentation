@@ -41,9 +41,9 @@ def createMaskDummy(image, colour, x1, x2, y1, y2):
 # here it's just a formality I guess
 if __name__ == "__main__":
     # Define paths to data directories
-    images_dir = "./2019-09-05 Millbrook/img/"
-    annotations_dir = "./2019-09-05 Millbrook/ann/"
-    seg_annotations_dir = "./2019-09-05 Millbrook/segment_ann/"
+    images_dir = "../Training/img"
+    annotations_dir = "../Training/ann/"
+    seg_annotations_dir = "../Training/segment_ann/"
 
     # Check if the ./segment_ann folder exists. If not - creeate one
     if not os.path.exists(seg_annotations_dir):
@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
                 if x2-x1 == 0 or y2-y1 == 0:
                     continue
-                mask = createMaskDummy(image, colour, x1, x2, y1, y2)
+                mask = createMask(image, colour, x1, x2, y1, y2)
                 string = mask_2_base64(mask)
 
                 # Modify annotations object
