@@ -2,10 +2,44 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+#### Each if these functions return a mask for essential colours
+# They take the imafge in hsv
+def extractWhite(hsv):
+    whiteLower = np.array([20, 20, 150])
+    whiteUpper = np.array([180, 70, 255])
+    #whiteUpper = np.array([196, 216, 255])
+    mask = cv2.inRange(hsv,whiteLower,whiteUpper)
+    return mask
+    
+
+def extractBlue(hsv):
+    blueLower = np.array([100, 150, 50])
+    blueUpper = np.array([150, 255, 255])
+    mask = cv2.inRange(hsv,blueLower,blueUpper)
+    return mask
+
+def extractOrange(hsv):
+    orangeLower = np.array([0, 100, 100])
+    orangeUpper = np.array([20, 255, 255])
+    mask = cv2.inRange(hsv,orangeLower,orangeUpper)
+    return mask
+
+def extractYellow(hsv):
+    yellowLower = np.array([20, 100, 60])
+    yellowUpper = np.array([35, 255, 255])
+    mask = cv2.inRange(hsv,yellowLower,yellowUpper)
+    return mask
+
+def extractBlack(hsv):
+    blackLower = np.array([0, 0, 0])
+    blackUpper = np.array([180, 255, 80])
+    mask = cv2.inRange(hsv,blackLower,blackUpper)
+    return mask
+
+
 
 def createMask(name,x1,x2,y1,y2):
     img = cv2.imread('./Training/img/'+str(name)+'.png', cv2.IMREAD_COLOR) 
-
     
     #rectROI = cv2.rectangle(316,397,445,557)
     imgROI = img[int(y1):int(y2),int(x1):int(x2)]                    # [y1:y2,x1:x2]
@@ -15,38 +49,20 @@ def createMask(name,x1,x2,y1,y2):
     #Img color conversion
     gray = cv2.cvtColor(resised_img,cv2.COLOR_BGR2GRAY)
     hsv = cv2.cvtColor(resised_img,cv2.COLOR_BGR2HSV)
-
-
-    # Colour boundries nympy arrays
-    blueLower = np.array([100, 150, 50])
-    blueUpper = np.array([150, 255, 255])
-
-    whiteLower = np.array([20, 20, 150])
-    whiteUpper = np.array([180, 70, 255])
-    #whiteUpper = np.array([196, 216, 255])
-
-    orangeLower = np.array([0, 100, 100])
-    orangeUpper = np.array([20, 255, 255])
-
-    yellowLower = np.array([20, 100, 60])
-    yellowUpper = np.array([35, 255, 255])
-
-    blackLower = np.array([0, 0, 0])
-    blackUpper = np.array([180, 255, 80])
-
+    
     #Masks
-    mask_blue = cv2.inRange(hsv,blueLower,blueUpper)
-    mask_white = cv2.inRange(hsv,whiteLower,whiteUpper)
-    mask_orage = cv2.inRange(hsv,orangeLower,orangeUpper)
-    mask_yellow = cv2.inRange(hsv,yellowLower,yellowUpper)
-    mask_black = cv2.inRange(hsv,blackLower,blackUpper)
+    mask_blue = extractBlue(hsv)
+    mask_white = extractWhite(hsv)
+    mask_orange = extractOrange(hsv)
+    mask_yellow = extractYellow(hsv)
+    mask_black = extractBlack(hsv)
 
     #Result
-    res_blue = cv2.bitwise_and(resised_img,resised_img,mask=mask_blue)
-    res_white = cv2.bitwise_and(resised_img,resised_img,mask=mask_white)
-    res_orange = cv2.bitwise_and(resised_img,resised_img,mask=mask_orage)
-    res_yellow = cv2.bitwise_and(resised_img,resised_img,mask=mask_yellow)
-    res_black = cv2.bitwise_and(resised_img,resised_img,mask=mask_black)
+    # res_blue = cv2.bitwise_and(resised_img,resised_img,mask=mask_blue)
+    # res_white = cv2.bitwise_and(resised_img,resised_img,mask=mask_white)
+    # res_orange = cv2.bitwise_and(resised_img,resised_img,mask=mask_orage)
+    # res_yellow = cv2.bitwise_and(resised_img,resised_img,mask=mask_yellow)
+    # res_black = cv2.bitwise_and(resised_img,resised_img,mask=mask_black)
 
 
     #Added images
