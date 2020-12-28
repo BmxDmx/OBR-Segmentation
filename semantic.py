@@ -53,20 +53,19 @@ def createMask(name,x1,x2,y1,y2):
     gray = cv2.cvtColor(resised_img,cv2.COLOR_BGR2GRAY)
     hsv = cv2.cvtColor(resised_img,cv2.COLOR_BGR2HSV)
     
-    #Masks
+    # Masks
     mask_blue = extractBlue(hsv)
     mask_white = extractWhite(hsv)
     mask_orange = extractOrange(hsv)
     mask_yellow = extractYellow(hsv)
     mask_black = extractBlack(hsv)
 
-    #Result
+    # Result
     res_blue = cv2.bitwise_and(resised_img,resised_img,mask=mask_blue)
     res_white = cv2.bitwise_and(resised_img,resised_img,mask=mask_white)
     res_orange = cv2.bitwise_and(resised_img,resised_img,mask=mask_orange)
     res_yellow = cv2.bitwise_and(resised_img,resised_img,mask=mask_yellow)
     res_black = cv2.bitwise_and(resised_img,resised_img,mask=mask_black)
-
 
     #Added images
     added_yellow = cv2.addWeighted(res_yellow,0.5,res_black,0.5,-20)
