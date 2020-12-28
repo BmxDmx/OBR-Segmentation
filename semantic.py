@@ -86,7 +86,7 @@ def createMask(name,x1,x2,y1,y2):
     # cv2.imshow('thresh_gray',thresh_gray)
 
     cv2.imshow('mask_blue',mask_blue)
-    #cv2.imshow('res_blue',res_blue)
+    cv2.imshow('res_blue',res_blue)
 
     cv2.imshow('mask_white',mask_white)
     # cv2.imshow('res_white',res_white)
@@ -103,7 +103,7 @@ def createMask(name,x1,x2,y1,y2):
     # cv2.imshow('added_yellow',added_yellow)
     # cv2.imshow('added_blue',added_blue)
     # cv2.imshow('added_together',added_together)
-
+    print(mask_yellow)
 
 
     cv2.waitKey(0)

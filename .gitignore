@@ -6,3 +6,4 @@ segment_ann
 *.json
 *.jpeg
 *.jpg
+.venv
