@@ -4,23 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from semantic import createMask
 import os       # For working with the filesystem
-
-# Separate the list of coordinates to x1,x2,y1,y2
-def regionOfImageX1(coordinateList):
-    x1 = coordinateList[0][0]
-    return x1
-
-def regionOfImageX2(coordinateList):
-    x2 = coordinateList[1][0]
-    return x2
-
-def regionOfImageY1(coordinateList):
-    y1 = coordinateList[0][1]
-    return y1
-
-def regionOfImageY2(coordinateList):
-    y2 = coordinateList[1][1]
-    return y2
+from SupervislyDecodingEncoding import mask_2_base64
 
 
 # Accepts the path to json file with annotations (Supervisely style)
@@ -38,22 +22,19 @@ def extractBoundingBoxes(json_path):
             fullList.append(bbox)
     return fullList
 
-{
-    "color": "yellow",
-    "coords": [[x1, y1], [x2, y2]]
-}
 
+def createMaskDummy(image, colour, x1, x2, y1, y2):
+    # imgROI = image[int(y1):int(y2),int(x1):int(x2)]
+    # blueLower = np.array([100, 150, 50])
+    # blueUpper = np.array([150, 255, 255])
+    # hsv = cv2.cvtColor(imgROI,cv2.COLOR_BGR2HSV)
+    # mask_blue = cv2.inRange(hsv,blueLower,blueUpper)
+    # res_blue = cv2.bitwise_and(imgROI,imgROI,mask=mask_blue)
 
-# Accepts the path to the image and the list of bounding box coordinates for that image
-# Returns the list of masks (as images)
-def extractMasks(image_path, bounding_boxes):
-    image = cv2.imread(image_path)   
-    
-    # TODO: make createMask return the resulting mask
-    # pass image path instead ot indexNumber
-    
-    return mask
-
+    ones = np.ones((y2-y1, x2-x1), dtype=bool)
+    ones[0][0] = False
+    print(ones)
+    return ones
 
 # A standard condition that ensures this code is only run when this .py is explicitly executed / called
 # otherwise the code will be triggered when this .py file is imported by other .py files
@@ -79,25 +60,43 @@ if __name__ == "__main__":
         #print(image_path)
 
         # Extract bounding boxes coordinates
-        bounding_boxes = extractBoundingBoxes(annotations_dir + annotation_json)
+        #bounding_boxes = extractBoundingBoxes(annotations_dir + annotation_json)
         #print(bounding_boxes)
-
-        # ... not done yet:
 
         image = cv2.imread(image_path)
 
-        # Extract a mask for each bounding box in the corresponding image
-        masks = []
-        for bbox in bounding_boxes:
-            x1 = bbox["coords"][0][0]
-            y1 = bbox["coords"][0][1]
-            x2 = bbox["coords"][1][0]
-            y2 = bbox["coords"][1][1]
-            mask = createMask(image, bbox["color"], x1, x2, y1, y2)
-            masks.append(mask)
-
-        # Convert the masks map into a string
-        for mask in masks:
-            # extract each string
-
         # Add the mask string to the annotation file (make a copy! don't modify the original)
+        new_objects = []
+        with open(annotations_dir + annotation_json) as f:
+            string = f.read()
+            annotations_obj = json.loads(string)
+            for objIndex in range(len(annotations_obj["objects"])):
+
+                # Extract a bitmap for each bounding box
+                coords = annotations_obj["objects"][objIndex]['points']['exterior']
+                colour = annotations_obj["objects"][objIndex]["classTitle"]
+                x1 = coords[0][0]
+                y1 = coords[0][1]
+                x2 = coords[1][0]
+                y2 = coords[1][1]
+
+                if x2-x1 == 0 or y2-y1 == 0:
+                    continue
+                mask = createMaskDummy(image, colour, x1, x2, y1, y2)
+                string = mask_2_base64(mask)
+
+                # Modify annotations object
+                annotations_obj["objects"][objIndex]["geometryType"] = "bitmap"
+                annotations_obj["objects"][objIndex]["bitmap"] = {
+                    "data": string,
+                    "origin": [x1, y1]
+                }
+                del annotations_obj["objects"][objIndex]["points"]
+                new_objects.append(annotations_obj["objects"][objIndex])
+
+        annotations_obj["objects"] = new_objects
+        # Write a new json file
+        with open(seg_annotations_dir + annotation_json, "w") as new_f:
+            json.dump(annotations_obj, new_f)
+
+        
