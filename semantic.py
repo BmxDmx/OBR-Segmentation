@@ -36,6 +36,8 @@ def extractBlack(hsv):
     mask = cv2.inRange(hsv,blackLower,blackUpper)
     return mask
 
+
+
 #This function returns the mask file of one cone
 #Image = hsv values of the image that has already been read and corresponds to extractBoundingBoxes() annotation 
 #cone_colour = string outputted from function extractBoundingBoxes()
@@ -54,7 +56,6 @@ def createMask(image, cone_colour, x1, x2, y1, y2):       #Parameters: Image, co
     
     #If statements based on cone_colour to return the correct function to be called on the bounding box image
     mask = np.zeros((y2-y1, x2-x1), dtype=bool)     
-    mask[0][0] = True
     if cone_colour == "yellow":
         yellow_mask = extractYellow(hsv_of_cone)
         black_mask = extractBlack(hsv_of_cone)
@@ -67,8 +68,8 @@ def createMask(image, cone_colour, x1, x2, y1, y2):       #Parameters: Image, co
         blue_mask = extractBlue(hsv_of_cone)
         white_mask = extractWhite(hsv_of_cone)
         mask = cv2.add(blue_mask, white_mask)
-    
-    mask = mask.astype(bool)
+
+    mask = mask.astype(bool)    
     return mask
 
     
